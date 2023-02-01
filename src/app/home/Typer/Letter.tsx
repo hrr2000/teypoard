@@ -3,9 +3,10 @@ import { memo, useEffect, useMemo } from "react";
 
 function getOffset(el: any) {
     const rect = el?.getBoundingClientRect();
+    const parent = document?.querySelector('#typer')?.getBoundingClientRect();
     return {
-      left: rect?.left + window.scrollX,
-      top: rect?.top + window.scrollY
+      left: rect?.left + window.scrollX - (parent?.left || 0),
+      top: rect?.top + window.scrollY - (parent?.top || 0)
     };
   }
 

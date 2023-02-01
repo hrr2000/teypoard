@@ -22,10 +22,10 @@ export default function Typer() {
     } = useTyper();
 
     return testsCount > -1 ? (
-        <div className="w-full break-words text-3xl relative overflow-hidden my-28" onClick={focusAction(true)}>
+        <div id="typer" className="w-full break-words text-3xl relative overflow-hidden my-28" onClick={focusAction(true)}>
             {displayCaret && isActive && (
                 <span id="typer-caret" 
-                      className={`w-[3px] h-8 rounded-lg duration-100 bg-pink-500 block fixed`} style={{
+                      className={`w-[3px] h-8 rounded-lg duration-100 bg-pink-500 block absolute`} style={{
                         top: caretPosition.top,
                         left: caretPosition.left
                       }}></span>
