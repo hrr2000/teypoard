@@ -11,7 +11,8 @@ export default function useTyper() {
 
     const focusAction = (state: boolean) => (e: MouseEventReact | MouseEvent | null) => {
         e?.stopPropagation();
-        if(typeof document !== "undefined") document.querySelector('body')?.setAttribute('data-active', state ? 'true' : 'false')  
+        if(typeof document !== "undefined") 
+            document.querySelector('body')?.setAttribute('data-active', state ? 'true' : 'false')  
         return setIsActive(state);
     }
 
@@ -20,47 +21,63 @@ export default function useTyper() {
             setDisplayCaret(true);
         }, 500);
     }, [])
+
+    // flag that guarentees that events are set once
     let isEventsSet = false;
 
     useEffect(() => {
         if(!isEventsSet) {
+            // mark as true so the events are set once
             isEventsSet = true;
+
+            // focusing the typer box
             window.addEventListener("click", focusAction(false))
-            window.addEventListener("keydown", (e) => {
+
+            // handling keyboard inputs
+            window.addEventListener("keydown", async (e) => {
                 if(!e.key || !e.code) return;
                 e.stopPropagation();
+
+                // defingin the variables storing the states "beacuse I can't access the states after setting the event"
                 let currentBuffer = '', 
                     wordIdx = 0,
                     isActive = (typeof document !== "undefined") && document.querySelector('body')?.getAttribute('data-active') === 'true', 
                     bufferHistory: string[] = [];
-                setBuffer(buffer => currentBuffer = buffer);
-                setActiveIndex(idx => wordIdx = idx);
-                setBufferHistory(h => bufferHistory = h);
+
+                // storing the states values inside variables 
+                await setBuffer(buffer => currentBuffer = buffer);
+                await setActiveIndex(idx => wordIdx = idx);
+                await setBufferHistory(h => bufferHistory = h);
 
                 // if clicekd backspace or ctrl + backspace
                 if(e.code === 'Backspace') {
-                    if(wordIdx > 0 && !currentBuffer.length) {
-                        setBuffer(bufferHistory?.[wordIdx - 1] || '');
-                        setBufferHistory(h => h.slice(0, -1));
-                        setActiveIndex(idx => idx - 1); 
+                    // clear the full word
+                    if(e.ctrlKey) setBuffer('');
+
+                    // delete the last character
+                    if(currentBuffer.length) setBuffer(buffer => currentBuffer = buffer.slice(0, -1).trim())
+
+                    // if free buffer go back to the last word
+                    if(bufferHistory.length && !currentBuffer.length) {
+                        await setActiveIndex(idx => idx - 1)
+                        await setBuffer(bufferHistory?.slice(-1)?.[0] || '');
+                        await setBufferHistory(h => h.slice(0, -1));
                     }
-                    if(e.ctrlKey) {
-                        return setBuffer('');
-                    }
-                    return setBuffer(buffer => buffer.slice(0, -1))
                 }
 
                 // if letter add it
                 if(e.key != ' ' && e.key.length === 1) {
                     if(!isActive) return focusAction(true)(null);  
-                    setBuffer((buffer) => buffer + e.key);
+                    setBuffer((buffer) => {
+                        return buffer + e.key
+                    });
                 }
                 
                 // if clicked space
                 if(e.key === ' ') {
-                    setBufferHistory(list => [...list, currentBuffer || '']);
-                    setBuffer('');
-                    setActiveIndex(idx => idx + 1)
+                    await setBufferHistory(list => [...list, currentBuffer || '']);
+                    await setBuffer('');
+                    await setActiveIndex(idx => idx + 1)
                 }
             })
         }
