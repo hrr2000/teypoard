@@ -1,4 +1,6 @@
 import './globals.css'
+import Content from './layout/Content'
+import Header from './layout/Header'
 
 export default function RootLayout({
   children,
@@ -7,12 +9,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      {/*
-        <head /> will contain the components returned by the nearest parent
-        head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
-      */}
-      <head />
-      <body>{children}</body>
+        <head />
+        <body className="bg-primary text-primary">
+            <main>
+                <Header />
+                <div className="container m-auto">
+                    <Content>
+                        {children}
+                    </Content>
+                </div>
+            </main>
+        </body>
     </html>
   )
 }
