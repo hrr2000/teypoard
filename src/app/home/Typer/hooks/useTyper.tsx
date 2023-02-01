@@ -1,6 +1,5 @@
 import { MouseEvent as MouseEventReact, useEffect, useState } from "react"
 
-let isEventsSet = false;
 
 export default function useTyper() {
     const [isActive, setIsActive] = useState<boolean>(true);
@@ -21,7 +20,7 @@ export default function useTyper() {
             setDisplayCaret(true);
         }, 500);
     }, [])
-
+    let isEventsSet = false;
 
     useEffect(() => {
         if(!isEventsSet) {
