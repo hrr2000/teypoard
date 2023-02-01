@@ -17,10 +17,14 @@ export default function useTyper() {
     }
 
     useEffect(() => {
+        if(!isActive) {
+            setDisplayCaret(false);
+            return;
+        }
         setTimeout(() => {
             setDisplayCaret(true);
-        }, 500);
-    }, [])
+        }, 100);
+    }, [isActive])
 
     // flag that guarentees that events are set once
     let isEventsSet = false;
@@ -30,8 +34,9 @@ export default function useTyper() {
             // mark as true so the events are set once
             isEventsSet = true;
 
-            // focusing the typer box
+            // blurring the typer box
             window.addEventListener("click", focusAction(false))
+            window.addEventListener("resize", () => focusAction(false)(null))
 
             // handling keyboard inputs
             window.addEventListener("keydown", async (e) => {

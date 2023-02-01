@@ -19,14 +19,14 @@ export default function Typer() {
 
     return (
         <div className="w-full break-words text-3xl relative overflow-hidden" onClick={focusAction(true)}>
-            {displayCaret && (
-                <span   id="typer-caret" 
-                        className={`w-[2px] h-8 rounded-lg duration-100 bg-pink-500 block fixed`} style={{
-                    top: caretPosition.top,
-                    left: caretPosition.left
-                }}></span>
+            {displayCaret && isActive && (
+                <span id="typer-caret" 
+                      className={`w-[3px] h-8 rounded-lg duration-100 bg-pink-500 block fixed`} style={{
+                        top: caretPosition.top,
+                        left: caretPosition.left
+                      }}></span>
             )}
-            {isActive && (<h3 className="text-pink-600 py-5 text-center">Active</h3>)}
+            {/* {isActive && (<h3 className="text-pink-600 py-5 text-center">Active</h3>)} */}
             {statement.split(' ').map((word, idx) => {
                 if(activeIndex > idx) {
                     return <Word 
