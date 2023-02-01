@@ -74,8 +74,6 @@ export default function useTyper() {
                     // clear the full word
                     if(e.ctrlKey) setBuffer('');
 
-                    // delete the last character
-                    if(currentBuffer.length) setBuffer(buffer => currentBuffer = buffer.slice(0, -1).trim())
 
                     // if free buffer go back to the last word
                     if(bufferHistory.length && !currentBuffer.length) {
@@ -83,6 +81,8 @@ export default function useTyper() {
                         await setBuffer(bufferHistory?.slice(-1)?.[0] || '');
                         await setBufferHistory(h => h.slice(0, -1));
                     }
+                    // delete the last character
+                    if(currentBuffer.length) setBuffer(buffer => currentBuffer = buffer.slice(0, -1).trim())
                 }
 
                 // if letter add it

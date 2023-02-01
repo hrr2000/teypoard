@@ -6,7 +6,7 @@ export default function LoginPage () {
         <section>
             <header>
             </header>
-            <main className="py-10 flex gap-10 justify-around">
+            <main className="py-10 flex flex-col md:flex-row gap-10 justify-around">
                 <LoginForm />
                 <RegisterForm />
             </main>
