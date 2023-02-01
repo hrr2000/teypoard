@@ -1,4 +1,5 @@
 import { MouseEvent as MouseEventReact, useEffect, useState } from "react"
+import useStatementGenerator from "./useStatementGenerator";
 
 
 export default function useTyper() {
@@ -8,6 +9,10 @@ export default function useTyper() {
     const [bufferHistory, setBufferHistory] = useState<string[]>([]);
     const [caretPosition, setCaretPosition] = useState<{top: string; left: string}>({top: '0px', left: '0px'});
     const [displayCaret, setDisplayCaret] = useState<boolean>(false);
+    const [statement, setStatement] = useState<string[]>([]);
+    const [testsCount, setTestsCount] = useState<number>(0); 
+
+    const {generateStatement} = useStatementGenerator();
 
     const focusAction = (state: boolean) => (e: MouseEventReact | MouseEvent | null) => {
         e?.stopPropagation();
@@ -15,6 +20,16 @@ export default function useTyper() {
             document.querySelector('body')?.setAttribute('data-active', state ? 'true' : 'false')  
         return setIsActive(state);
     }
+
+    useEffect(() => {
+        // @ts-ignore
+        document.querySelector("#hdn-in").focus();
+        setStatement(generateStatement({type: 'dictionary', limit: 30}));
+        setBuffer('');
+        setBufferHistory([]);
+        setActiveIndex(0);
+        window.focus();
+    }, [testsCount])
 
     useEffect(() => {
         if(!isActive) {
@@ -95,6 +110,10 @@ export default function useTyper() {
         bufferHistory,
         caretPosition,
         displayCaret,
+        statement,
+        testsCount,
+        setTestsCount,
+        setStatement,
         setBuffer,
         setIsActive,
         focusAction,
