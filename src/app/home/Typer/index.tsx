@@ -16,7 +16,7 @@ export default function Typer() {
                     left: caretPosition.left
                 }}></span>
             )}
-            {/* {isActive && (<h3 className="text-pink-600 py-5 text-center">Active</h3>)} */}
+            {isActive && (<h3 className="text-pink-600 py-5 text-center">Active</h3>)}
             {statement.split(' ').map((word, idx) => {
                 if(activeIndex > idx) {
                     return <Word caretPosition={caretPosition} setCaretPosition={setCaretPosition} key={GRK('word')} isActive={false} isPassed={true} word={word} buffer={bufferHistory?.[idx]}/>
