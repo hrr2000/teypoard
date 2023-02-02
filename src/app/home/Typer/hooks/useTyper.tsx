@@ -104,7 +104,7 @@ export default function useTyper() {
                 }
 
                 // if letter add it
-                if(e.key != ' ' && e.key.length === 1) {
+                if(e.key != ' ' && e.key.length === 1 && currentBuffer.length < 25) {
                     if(!isActive) return focusAction(true)(null);  
                     setBuffer((buffer) => {
                         return buffer + e.key
