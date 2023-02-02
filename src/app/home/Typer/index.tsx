@@ -14,7 +14,7 @@ export default function Typer() {
         buffer, 
         bufferHistory, 
         caretPosition, 
-        setCaretPosition, 
+        handleLetterCaretChange, 
         displayCaret,
         statement,
         setTestsCount,
@@ -22,7 +22,7 @@ export default function Typer() {
     } = useTyper();
 
     return testsCount > -1 ? (
-        <div id="typer" className="w-full break-words text-3xl relative overflow-hidden my-28" onClick={focusAction(true)}>
+        <div id="typer" data-id={GRK('typer')} className="w-full break-words text-3xl relative overflow-hidden my-28" onClick={focusAction(true)}>
             {displayCaret && isActive && (
                 <span id="typer-caret" 
                       className={`w-[3px] h-8 rounded-lg duration-100 bg-pink-500 block absolute`} style={{
@@ -34,22 +34,20 @@ export default function Typer() {
             {statement.map((word, idx) => {
                 if(activeIndex > idx) {
                     return <Word 
-                                caretPosition={caretPosition} 
-                                setCaretPosition={setCaretPosition} 
-                                key={GRK('word')} 
+                                setCaretPosition={handleLetterCaretChange} 
+                                key={'word' + word + idx} 
                                 isActive={false} 
                                 isPassed={true} 
                                 word={word} 
                                 buffer={bufferHistory?.[idx]} />
                 }
                 return (<Word 
-                            caretPosition={caretPosition} 
-                            setCaretPosition={setCaretPosition} 
-                            key={GRK('word')} 
+                            setCaretPosition={handleLetterCaretChange} 
+                            key={'word' + word + idx} 
                             isActive={idx === activeIndex} 
                             isPassed={activeIndex > idx} 
                             word={word} 
-                            buffer={activeIndex > idx ? bufferHistory?.[idx] : buffer} />)
+                            buffer={activeIndex === idx ? buffer : ''} />)
             })}
             <div className="w-full text-center my-14">
                 <input type="text" id="hdn-in" className="w-0 p-0 outline-0 focus:outline-0" style={{boxShadow: 'none !important', border: 'none !important'}}/>

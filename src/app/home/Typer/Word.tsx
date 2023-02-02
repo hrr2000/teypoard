@@ -9,14 +9,12 @@ function Word({ word,
                 buffer, 
                 isPassed, 
                 setCaretPosition, 
-                caretPosition
             }: {   
                 word: string; 
                 isActive: boolean; 
                 buffer: string; 
                 isPassed: boolean; 
                 setCaretPosition: Function, 
-                caretPosition: any
             }) {
     const {content, compareLetters} = useWord({word, isActive, buffer, isPassed});
     
@@ -28,7 +26,6 @@ function Word({ word,
                     return  <Letter 
                                 id={GRK('letter')} 
                                 isActive={false} 
-                                caretPosition={caretPosition} 
                                 setCaretPosition={setCaretPosition} 
                                 key={GRK('letter')} 
                                 value={letter} 
@@ -38,7 +35,6 @@ function Word({ word,
                             id={GRK('letter')} 
                             isActive={isActive && idx === buffer.length} 
                             key={GRK('letter')} 
-                            caretPosition={caretPosition} 
                             setCaretPosition={setCaretPosition}  
                             value={word[idx]} 
                             state={(isActive || isPassed) ? compareLetters(idx) : ''} />
@@ -47,7 +43,6 @@ function Word({ word,
                 <Letter 
                     id={GRK('letter')} 
                     isActive={true} 
-                    caretPosition={caretPosition} 
                     setCaretPosition={setCaretPosition} 
                     key={GRK('letter')} 
                     value={''} 

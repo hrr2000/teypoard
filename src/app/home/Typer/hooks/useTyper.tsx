@@ -1,30 +1,41 @@
-import { MouseEvent as MouseEventReact, useEffect, useState } from "react"
+import { MouseEvent as MouseEventReact, useCallback, useEffect, useState } from "react"
 import useStatementGenerator from "./useStatementGenerator";
 
+interface ICaretPosition {top: string | number; left: string | number}
 
 export default function useTyper() {
     const [isActive, setIsActive] = useState<boolean>(true);
     const [activeIndex, setActiveIndex] = useState<number>(0);
     const [buffer, setBuffer] = useState<string>('');
     const [bufferHistory, setBufferHistory] = useState<string[]>([]);
-    const [caretPosition, setCaretPosition] = useState<{top: string; left: string}>({top: '0px', left: '0px'});
+    const [caretPosition, setCaretPosition] = useState<ICaretPosition>({top: '0px', left: '0px'});
     const [displayCaret, setDisplayCaret] = useState<boolean>(false);
     const [statement, setStatement] = useState<string[]>([]);
     const [testsCount, setTestsCount] = useState<number>(0); 
 
     const {generateStatement} = useStatementGenerator();
 
-    const focusAction = (state: boolean) => (e: MouseEventReact | MouseEvent | null) => {
+    const focusAction = useCallback((state: boolean) => (e: MouseEventReact | MouseEvent | null) => {
         e?.stopPropagation();
         if(typeof document !== "undefined") 
             document.querySelector('body')?.setAttribute('data-active', state ? 'true' : 'false')  
         return setIsActive(state);
-    }
+    }, [])
+
+    const handleLetterCaretChange = useCallback((offset: ICaretPosition) => {
+        setCaretPosition((pos: any) => {
+            if(pos.left === `${offset.left}px` && pos.top === `${offset.top}px`) return pos;
+            return {
+                left: `${offset.left}px`,
+                top: `${offset.top}px`
+            }
+        })
+    }, [])
 
     useEffect(() => {
         // @ts-ignore
         document.querySelector("#hdn-in").focus();
-        setStatement(generateStatement({type: 'dictionary', limit: 30}));
+        setStatement(generateStatement({type: 'dictionary', limit: 200}));
         setBuffer('');
         setBufferHistory([]);
         setActiveIndex(0);
@@ -118,6 +129,7 @@ export default function useTyper() {
         setIsActive,
         focusAction,
         setActiveIndex,
-        setCaretPosition
+        setCaretPosition,
+        handleLetterCaretChange
     }
 }
