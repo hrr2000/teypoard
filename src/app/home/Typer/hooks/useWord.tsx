@@ -13,7 +13,8 @@ export default function useWord ({word, buffer, isActive, isPassed}: {word: stri
     }
     useEffect(() => {
         if(isActive && !isPassed) {
-            if(buffer.length > word.length) {
+            if(!buffer.length) setContent(word);
+            if(buffer.length >= word.length) {
                 setContent(buffer)
             }
         }

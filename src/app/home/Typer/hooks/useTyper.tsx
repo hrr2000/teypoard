@@ -22,6 +22,10 @@ export default function useTyper() {
         return setIsActive(state);
     }, [])
 
+    useEffect(() => {
+        focusAction(true)(null);
+    }, [])
+
     const handleLetterCaretChange = useCallback((offset: ICaretPosition) => {
         setCaretPosition((pos: any) => {
             if(pos.left === `${offset.left}px` && pos.top === `${offset.top}px`) return pos;
@@ -35,7 +39,7 @@ export default function useTyper() {
     useEffect(() => {
         // @ts-ignore
         document.querySelector("#hdn-in").focus();
-        setStatement(generateStatement({type: 'dictionary', limit: 200}));
+        setStatement(generateStatement({type: 'dictionary', limit: 30}));
         setBuffer('');
         setBufferHistory([]);
         setActiveIndex(0);
@@ -67,24 +71,26 @@ export default function useTyper() {
             // handling keyboard inputs
             window.addEventListener("keydown", async (e) => {
                 if(!e.key || !e.code) return;
+                console.log(e.key)
+                if(!['Tab', 'F5', 'F12', 'Enter'].includes(e.key)) e.preventDefault();
                 e.stopPropagation();
 
                 // defingin the variables storing the states "beacuse I can't access the states after setting the event"
                 let currentBuffer = '', 
                     wordIdx = 0,
-                    isActive = (typeof document !== "undefined") && document.querySelector('body')?.getAttribute('data-active') === 'true', 
+                    isActive = document.querySelector('body')?.getAttribute('data-active') === 'true', 
                     bufferHistory: string[] = [];
 
                 // storing the states values inside variables 
                 await setBuffer(buffer => currentBuffer = buffer);
                 await setActiveIndex(idx => wordIdx = idx);
                 await setBufferHistory(h => bufferHistory = h);
+                console.log(buffer, bufferHistory);
 
                 // if clicekd backspace or ctrl + backspace
                 if(e.code === 'Backspace') {
                     // clear the full word
-                    if(e.ctrlKey) setBuffer('');
-
+                    if(e.ctrlKey) await setBuffer('');
 
                     // if free buffer go back to the last word
                     if(bufferHistory.length && !currentBuffer.length) {
@@ -92,6 +98,7 @@ export default function useTyper() {
                         await setBuffer(bufferHistory?.slice(-1)?.[0] || '');
                         await setBufferHistory(h => h.slice(0, -1));
                     }
+
                     // delete the last character
                     if(currentBuffer.length) setBuffer(buffer => currentBuffer = buffer.slice(0, -1).trim())
                 }
@@ -107,8 +114,8 @@ export default function useTyper() {
                 // if clicked space
                 if(e.key === ' ') {
                     await setBufferHistory(list => [...list, currentBuffer || '']);
-                    await setBuffer('');
                     await setActiveIndex(idx => idx + 1)
+                    await setBuffer('');
                 }
             })
         }

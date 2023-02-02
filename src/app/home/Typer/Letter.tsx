@@ -2,8 +2,9 @@ import { GRK } from "@/utils/functions";
 import { memo, useEffect, useMemo } from "react";
 
 function getOffset(el: any) {
-    const rect = el?.getBoundingClientRect();
-    const parent = document?.querySelector('#typer')?.getBoundingClientRect();
+    const rect = el?.getClientRects()[0];
+    const parent = document?.querySelector('#typer')?.getClientRects()[0];
+    console.log(parent)
     return {
       left: rect?.left + window.scrollX - (parent?.left || 0),
       top: rect?.top + window.scrollY - (parent?.top || 0)

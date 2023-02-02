@@ -4,6 +4,7 @@
 
 body, .content {
     font-family: monospace;
+    overflow: hidden;
 }
 
 input {
