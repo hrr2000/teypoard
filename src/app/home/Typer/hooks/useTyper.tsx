@@ -1,142 +1,219 @@
 import { MouseEvent as MouseEventReact, useCallback, useEffect, useState } from "react"
+import useCalculator from "./useCalculator";
 import useStatementGenerator from "./useStatementGenerator";
 
-interface ICaretPosition {top: string | number; left: string | number}
+interface IPosition { top: string | number; left: string | number }
 
 export default function useTyper() {
-    const [isActive, setIsActive] = useState<boolean>(true);
-    const [activeIndex, setActiveIndex] = useState<number>(0);
-    const [buffer, setBuffer] = useState<string>('');
-    const [bufferHistory, setBufferHistory] = useState<string[]>([]);
-    const [caretPosition, setCaretPosition] = useState<ICaretPosition>({top: '0px', left: '0px'});
-    const [displayCaret, setDisplayCaret] = useState<boolean>(false);
-    const [statement, setStatement] = useState<string[]>([]);
-    const [testsCount, setTestsCount] = useState<number>(0); 
+  const [isActive, setIsActive] = useState<boolean>(true);
+  const [activeWordIndex, setActiveWordIndex] = useState<number>(0);
+  const [buffer, setBuffer] = useState<string>('');
+  const [bufferHistory, setBufferHistory] = useState<string[]>([]);
+  const [caretPosition, setCaretPosition] = useState<IPosition>({ top: '0px', left: '0px' });
+  const [displayCaret, setDisplayCaret] = useState<boolean>(false);
+  const [statement, setStatement] = useState<string[]>([]);
+  const [testsCount, setTestsCount] = useState<number>(0);
 
-    const {generateStatement} = useStatementGenerator();
 
-    const focusAction = useCallback((state: boolean) => (e: MouseEventReact | MouseEvent | null) => {
-        e?.stopPropagation();
-        if(typeof document !== "undefined") 
-            document.querySelector('body')?.setAttribute('data-active', state ? 'true' : 'false')  
-        return setIsActive(state);
-    }, [])
+  /**
+   * A flag that indicates whetherthe events is already added to elements
+   */
+  let isEventsSet = false;
 
-    useEffect(() => {
-        focusAction(true)(null);
-    }, [])
 
-    const handleLetterCaretChange = useCallback((offset: ICaretPosition) => {
-        setCaretPosition((pos: any) => {
-            if(pos.left === `${offset.left}px` && pos.top === `${offset.top}px`) return pos;
-            return {
-                left: `${offset.left}px`,
-                top: `${offset.top}px`
-            }
-        })
-    }, [])
+  /**
+   * Calling hooks
+   */
+  const { generateStatement } = useStatementGenerator();
+  const { wpmCalculator } = useCalculator({
+    totalLettersCount: statement.join('').length
+  });
 
-    useEffect(() => {
-        // @ts-ignore
-        document.querySelector("#hdn-in").focus();
-        setStatement(generateStatement({type: 'dictionary', limit: 30}));
-        setBuffer('');
-        setBufferHistory([]);
-        setActiveIndex(0);
-        window.focus();
-    }, [testsCount])
 
-    useEffect(() => {
-        if(!isActive) {
-            setDisplayCaret(false);
-            return;
-        }
-        setTimeout(() => {
-            setDisplayCaret(true);
-        }, 100);
-    }, [isActive])
+  /**
+   * Focus or Blue the Typer element
+   */
+  const focusAction = useCallback((state: boolean) => (e: MouseEventReact | MouseEvent | null) => {
+    e?.stopPropagation();
+    document.querySelector('body')?.setAttribute('data-active', state ? 'true' : 'false')
+    return setIsActive(state);
+  }, [])
 
-    // flag that guarentees that events are set once
-    let isEventsSet = false;
 
-    useEffect(() => {
-        if(!isEventsSet) {
-            // mark as true so the events are set once
-            isEventsSet = true;
+  /**
+   * Updates the Caret position depending on the active Letter Offset
+   */
+  const handleLetterCaretChange = useCallback((offset: IPosition) => {
+    setCaretPosition((pos: any) => {
+      if (pos.left === `${offset.left}px` && pos.top === `${offset.top}px`) return pos;
+      return {
+        left: `${offset.left}px`,
+        top: `${offset.top}px`
+      }
+    })
+  }, [])
 
-            // blurring the typer box
-            window.addEventListener("click", focusAction(false))
-            window.addEventListener("resize", () => focusAction(false)(null))
 
-            // handling keyboard inputs
-            window.addEventListener("keydown", async (e) => {
-                if(!e.key || !e.code) return;
-                console.log(e.key)
-                if(!['Tab', 'F5', 'F12', 'Enter'].includes(e.key)) e.preventDefault();
-                e.stopPropagation();
-
-                // defingin the variables storing the states "beacuse I can't access the states after setting the event"
-                let currentBuffer = '', 
-                    wordIdx = 0,
-                    isActive = document.querySelector('body')?.getAttribute('data-active') === 'true', 
-                    bufferHistory: string[] = [];
-
-                // storing the states values inside variables 
-                await setBuffer(buffer => currentBuffer = buffer);
-                await setActiveIndex(idx => wordIdx = idx);
-                await setBufferHistory(h => bufferHistory = h);
-                console.log(buffer, bufferHistory);
-
-                // if clicekd backspace or ctrl + backspace
-                if(e.code === 'Backspace') {
-                    // clear the full word
-                    if(e.ctrlKey) await setBuffer('');
-
-                    // if free buffer go back to the last word
-                    if(bufferHistory.length && !currentBuffer.length) {
-                        await setActiveIndex(idx => idx - 1)
-                        await setBuffer(bufferHistory?.slice(-1)?.[0] || '');
-                        await setBufferHistory(h => h.slice(0, -1));
-                    }
-
-                    // delete the last character
-                    if(currentBuffer.length) setBuffer(buffer => currentBuffer = buffer.slice(0, -1).trim())
-                }
-
-                // if letter add it
-                if(e.key != ' ' && e.key.length === 1 && currentBuffer.length < 25) {
-                    if(!isActive) return focusAction(true)(null);  
-                    setBuffer((buffer) => {
-                        return buffer + e.key
-                    });
-                }
-                
-                // if clicked space
-                if(e.key === ' ') {
-                    await setBufferHistory(list => [...list, currentBuffer || '']);
-                    await setActiveIndex(idx => idx + 1)
-                    await setBuffer('');
-                }
-            })
-        }
-    }, [typeof window !== "undefined"])
+  /**
+   * Defining variables that store the states "beacuse I can't access the states after setting the event"
+   */
+  const getStatesValues = async () => {
+    let currentBuffer = '',
+      wordIdx = 0,
+      bufferHistory: string[] = [];
+    // storing the states values inside variables 
+    await setBuffer(buffer => currentBuffer = buffer);
+    await setActiveWordIndex(idx => wordIdx = idx);
+    await setBufferHistory(h => bufferHistory = h);
 
     return {
-        isActive, 
-        activeIndex,
-        buffer,
-        bufferHistory,
-        caretPosition,
-        displayCaret,
-        statement,
-        testsCount,
-        setTestsCount,
-        setStatement,
-        setBuffer,
-        setIsActive,
-        focusAction,
-        setActiveIndex,
-        setCaretPosition,
-        handleLetterCaretChange
+      currentBuffer,
+      wordIdx,
+      bufferHistory
     }
+  }
+
+
+  /**
+   * Handler that is called if the Backspace key is pressed
+   */
+  const handleBackspacePress = async (e: KeyboardEvent) => {
+    let { currentBuffer, bufferHistory } = await getStatesValues();
+    // clear the full word
+    if (e.ctrlKey) await setBuffer('');
+
+    // if free buffer go back to the last word
+    if (bufferHistory.length && !currentBuffer.length) {
+      await setActiveWordIndex(idx => idx - 1)
+      await setBuffer(bufferHistory?.slice(-1)?.[0] || '');
+      await setBufferHistory(h => h.slice(0, -1));
+    }
+
+    // delete the last character
+    if (currentBuffer.length) setBuffer(buffer => currentBuffer = buffer.slice(0, -1).trim());
+  }
+
+
+  /**
+   * Handler that is called if any letter is pressed
+   */
+  const handleLetterPress = async (e: KeyboardEvent) => {
+    let { currentBuffer } = await getStatesValues();
+    if(!wpmCalculator.status()) wpmCalculator.start();
+    if (currentBuffer.length >= 25) return;
+    if (document.querySelector('body')?.getAttribute('data-active') !== 'true')
+      return focusAction(true)(null);
+    setBuffer(buffer => buffer + e.key);
+  }
+
+
+  /**
+   * Handler that is called if the Space key is pressed
+   */
+  const handleSpacePress = async (e: KeyboardEvent) => {
+    let { currentBuffer } = await getStatesValues();
+    if(!currentBuffer.length) return; // Prevent moving the next word without starting with the current
+    await setBufferHistory(list => [...list, currentBuffer || '']);
+    await setActiveWordIndex(idx => idx + 1)
+    await setBuffer('');
+  }
+
+
+  /**
+   * The function that handles any key press and Manages the Typer Element
+   */
+  const handleKeyboardKeyDown = async (e: KeyboardEvent) => {
+    // if not valid key pressed return
+    if (!e.key || !e.code) return;
+
+    // prevent default actions for some keys
+    if (!['Tab', 'F5', 'F12', 'Enter'].includes(e.key)) e.preventDefault();
+    e.stopPropagation();
+
+    if (e.code === 'Backspace')
+      return await handleBackspacePress(e);
+
+    if (e.key === ' ')
+      return await handleSpacePress(e);
+
+    if (e.key.length === 1)
+      return await handleLetterPress(e);
+  }
+
+
+  /**
+   * Initializes all the round states
+   */
+  const initializeRound = async () => {
+    // @ts-ignore
+    document.querySelector("#hdn-in").focus();
+    // Generate new statement
+    setStatement(generateStatement({ type: 'dictionary', limit: 30 }));
+    // Clear the buffer
+    setBuffer('');
+    // Clear the buffer history
+    setBufferHistory([]);
+    // Restart the active index to the first word
+    setActiveWordIndex(0);
+  }
+
+
+  /**
+   * Make the typer active on the initialization
+   */
+  useEffect(() => {
+    focusAction(true)(null);
+  }, [])
+
+
+  /**
+   * Reinitializes all the round states and starts new Typing Test
+   */
+  useEffect(() => {
+    initializeRound();
+    wpmCalculator.refresh();
+  }, [testsCount])
+
+
+  /**
+   * Toggles the display of the Caret depending on the state of the Typer Focus
+   */
+  useEffect(() => {
+    if (!isActive) {
+      setDisplayCaret(false);
+      return;
+    }
+    setDisplayCaret(true);
+  }, [isActive])
+
+
+  /**
+   * Adding Events on Initialization
+   */
+  useEffect(() => {
+    if (!isEventsSet) {
+      // mark as true so the events are set once
+      isEventsSet = true;
+      // blurring the typer box when clicking outside or resizing the window
+      window.addEventListener("click", focusAction(false))
+      window.addEventListener("resize", () => focusAction(false)(null))
+      // handling keyboard inputs
+      window.addEventListener("keydown", handleKeyboardKeyDown)
+    }
+  }, [typeof window !== 'undefined'])
+
+
+  return {
+    isActive,
+    activeWordIndex,
+    buffer,
+    bufferHistory,
+    caretPosition,
+    displayCaret,
+    statement,
+    testsCount,
+    setTestsCount,
+    focusAction,
+    handleLetterCaretChange
+  }
 }
