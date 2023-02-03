@@ -1,3 +1,4 @@
+import { getStateValueFromSetter } from "@/utils/functions";
 import { MouseEvent as MouseEventReact, useCallback, useEffect, useState } from "react"
 import useCalculator from "./useCalculator";
 import useStatementGenerator from "./useStatementGenerator";
@@ -13,6 +14,7 @@ export default function useTyper() {
   const [displayCaret, setDisplayCaret] = useState<boolean>(false);
   const [statement, setStatement] = useState<string[]>([]);
   const [testsCount, setTestsCount] = useState<number>(0);
+  const [results, setResults] = useState({ speed: '', accuracy: ''});
 
 
   /**
@@ -26,8 +28,29 @@ export default function useTyper() {
    */
   const { generateStatement } = useStatementGenerator();
   const { wpmCalculator } = useCalculator({
-    totalLettersCount: statement.join('').length
+    statement,
+    bufferHistory,
+    buffer,
   });
+
+  useEffect(() => {
+    setResults(wpmCalculator.result()); 
+  }, [caretPosition]);
+
+  /**
+   * Actions to do on the start of typign
+   */
+  const handleOnStartTyping = async () => {
+    wpmCalculator.start();
+  }
+
+
+  /**
+   * Actions to do on the start of typign
+   */
+  const handleOnStopTyping = async () => {
+      await wpmCalculator.stop();
+  }
 
 
   /**
@@ -58,18 +81,11 @@ export default function useTyper() {
    * Defining variables that store the states "beacuse I can't access the states after setting the event"
    */
   const getStatesValues = async () => {
-    let currentBuffer = '',
-      wordIdx = 0,
-      bufferHistory: string[] = [];
-    // storing the states values inside variables 
-    await setBuffer(buffer => currentBuffer = buffer);
-    await setActiveWordIndex(idx => wordIdx = idx);
-    await setBufferHistory(h => bufferHistory = h);
-
     return {
-      currentBuffer,
-      wordIdx,
-      bufferHistory
+      currentBuffer: await getStateValueFromSetter(setBuffer) || '',
+      wordIdx: await getStateValueFromSetter(setActiveWordIndex) || 0,
+      bufferHistory: await getStateValueFromSetter(setBufferHistory) || [],
+      statement: await getStateValueFromSetter(setStatement) || [],
     }
   }
 
@@ -98,12 +114,17 @@ export default function useTyper() {
    * Handler that is called if any letter is pressed
    */
   const handleLetterPress = async (e: KeyboardEvent) => {
-    let { currentBuffer } = await getStatesValues();
-    if(!wpmCalculator.status()) wpmCalculator.start();
+    let { currentBuffer, statement, wordIdx } = await getStatesValues();
+    if (!await wpmCalculator.status()) {
+      await handleOnStartTyping();
+    }
     if (currentBuffer.length >= 25) return;
     if (document.querySelector('body')?.getAttribute('data-active') !== 'true')
       return focusAction(true)(null);
-    setBuffer(buffer => buffer + e.key);
+    await setBuffer(buffer => currentBuffer = buffer + e.key);
+    if (currentBuffer === statement[wordIdx] && wordIdx + 1 === statement.length) {
+      await handleOnStopTyping();
+    }
   }
 
 
@@ -112,7 +133,7 @@ export default function useTyper() {
    */
   const handleSpacePress = async (e: KeyboardEvent) => {
     let { currentBuffer } = await getStatesValues();
-    if(!currentBuffer.length) return; // Prevent moving the next word without starting with the current
+    if (!currentBuffer.length) return; // Prevent moving the next word without starting with the current
     await setBufferHistory(list => [...list, currentBuffer || '']);
     await setActiveWordIndex(idx => idx + 1)
     await setBuffer('');
@@ -127,7 +148,10 @@ export default function useTyper() {
     if (!e.key || !e.code) return;
 
     // prevent default actions for some keys
-    if (!['Tab', 'F5', 'F12', 'Enter'].includes(e.key)) e.preventDefault();
+    if (!['Tab', 'F5', 'F12', 'Enter'].includes(e.key)) {
+      e.preventDefault();
+      if(await wpmCalculator.isStopped()) return;
+    }
     e.stopPropagation();
 
     if (e.code === 'Backspace')
@@ -148,13 +172,19 @@ export default function useTyper() {
     // @ts-ignore
     document.querySelector("#hdn-in").focus();
     // Generate new statement
-    setStatement(generateStatement({ type: 'dictionary', limit: 30 }));
+    setStatement(generateStatement({ type: 'dictionary', limit: 20 }));
     // Clear the buffer
     setBuffer('');
     // Clear the buffer history
     setBufferHistory([]);
     // Restart the active index to the first word
     setActiveWordIndex(0);
+    // Restart results
+    setResults({speed: '', accuracy: ''});
+    // Restart the wpmCalculator
+    if(!await wpmCalculator.isStopped()) {
+      wpmCalculator.refresh();
+    }
   }
 
 
@@ -171,7 +201,6 @@ export default function useTyper() {
    */
   useEffect(() => {
     initializeRound();
-    wpmCalculator.refresh();
   }, [testsCount])
 
 
@@ -212,6 +241,7 @@ export default function useTyper() {
     displayCaret,
     statement,
     testsCount,
+    results,
     setTestsCount,
     focusAction,
     handleLetterCaretChange
