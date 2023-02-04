@@ -25,7 +25,7 @@ export default function Typer({options}: ITyper) {
   } = useTyper({options});
 
   return testsCount > -1 ? (
-    <div id="typer" className="w-full flex flex-wrap overflow-auto text-3xl relative my-20" onClick={focusAction(true)}>
+    <div id="typer" className="w-full flex flex-wrap overflow-auto text-3xl relative my-10" onClick={focusAction(true)}>
       {displayCaret && isActive && (
         <span id="typer-caret"
           className={`w-[3px] h-8 rounded-lg duration-100 bg-pink-500 block absolute`} style={{
@@ -36,7 +36,7 @@ export default function Typer({options}: ITyper) {
       <div className="flex flex-col gap-1 w-full py-2">
         <span className="text-xl text-pink-500">accuracy: {results.accuracy}</span>
         <span className="text-xl text-pink-500">speed: {results.speed}</span>
-        <span className="text-xl text-pink-500">Seconds: {results.seconds}</span>
+        <span className="text-xl text-pink-500">seconds: {results.seconds}</span>
       </div>
       {statement.map((word, idx) => {
         if (activeWordIndex > idx) {

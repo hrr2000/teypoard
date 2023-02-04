@@ -5,7 +5,7 @@ import Typer from "./home/Typer";
 
 export default function Home() {
   const [numberOfWords, setNumberOfWords] = useState(10);
-  const wordsOptions = [10, 25, 50, 75];
+  const wordsOptions = [10, 25, 50];
 
   return (
     <div>
@@ -14,7 +14,7 @@ export default function Home() {
           return (
             <button key={GRK('button')} onClick={() => {
               setNumberOfWords(number)
-            }} className={`bg-secondary py-2 px-3 rounded-lg border-2 ${numberOfWords === number ? 'border-pink-600' : 'border-transparent'} hover:border-pink-600`}>
+            }} className={`option-btn bg-secondary py-2 px-3 rounded-lg border-2 ${numberOfWords === number ? 'border-pink-600' : 'border-transparent'} hover:border-pink-600`}>
               {number}
             </button>
           )

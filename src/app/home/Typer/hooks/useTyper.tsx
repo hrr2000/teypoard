@@ -61,6 +61,8 @@ export default function useTyper({options}: ITyper) {
    */
   const focusAction = useCallback((state: boolean) => (e: MouseEventReact | MouseEvent | null) => {
     e?.stopPropagation();
+    // @ts-ignore
+    if(e && e?.target?.classList?.contains('option-btn')) {return}
     document.querySelector('body')?.setAttribute('data-active', state ? 'true' : 'false')
     return setIsActive(state);
   }, [])
@@ -203,7 +205,11 @@ export default function useTyper({options}: ITyper) {
    * Reinitializes all the round states and starts new Typing Test
    */
   useEffect(() => {
-    initializeRound();
+    (async () => {
+      await initializeRound();
+      // Focus the typer
+      focusAction(true)(null);
+    })() 
   }, [testsCount, options])
 
 
