@@ -1,5 +1,5 @@
 import { shuffle } from "@/utils/functions";
-import { dictioarnyWordsList } from "../data/dictionary";
+import { easyEnglishWordsList } from "../data/easyEnglish";
 
 interface IGeneratorOptions {
   type: 'dictionary';
@@ -10,7 +10,7 @@ export default function useStatementGenerator() {
 
   const data = {
     dictionary: (options: IGeneratorOptions): string[] => {
-      return shuffle(dictioarnyWordsList).slice(0, options.limit || 30);
+      return shuffle(easyEnglishWordsList).slice(0, options.limit || 30);
     }
   }
 

@@ -5,6 +5,8 @@ import useStatementGenerator from "./useStatementGenerator";
 
 interface IPosition { top: string | number; left: string | number }
 
+const initialResults = { speed: '0.00%', accuracy: '0wpm', seconds: '0s'}
+
 export default function useTyper() {
   const [isActive, setIsActive] = useState<boolean>(true);
   const [activeWordIndex, setActiveWordIndex] = useState<number>(0);
@@ -14,7 +16,7 @@ export default function useTyper() {
   const [displayCaret, setDisplayCaret] = useState<boolean>(false);
   const [statement, setStatement] = useState<string[]>([]);
   const [testsCount, setTestsCount] = useState<number>(0);
-  const [results, setResults] = useState({ speed: '', accuracy: ''});
+  const [results, setResults] = useState(initialResults);
 
 
   /**
@@ -172,7 +174,7 @@ export default function useTyper() {
     // @ts-ignore
     document.querySelector("#hdn-in").focus();
     // Generate new statement
-    setStatement(generateStatement({ type: 'dictionary', limit: 20 }));
+    setStatement(generateStatement({ type: 'dictionary', limit: 10 }));
     // Clear the buffer
     setBuffer('');
     // Clear the buffer history
@@ -180,7 +182,7 @@ export default function useTyper() {
     // Restart the active index to the first word
     setActiveWordIndex(0);
     // Restart results
-    setResults({speed: '', accuracy: ''});
+    setResults(initialResults);
     // Restart the wpmCalculator
     if(!await wpmCalculator.isStopped()) {
       wpmCalculator.refresh();

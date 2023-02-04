@@ -1,4 +1,4 @@
-export const dictioarnyWordsList = [
+export const mediumEnglishWordsList = [
     "a",
     "able",
     "about",

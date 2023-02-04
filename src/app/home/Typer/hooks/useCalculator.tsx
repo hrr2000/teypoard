@@ -7,6 +7,7 @@ export default function useCalculator({ statement, bufferHistory, buffer }: { st
   const [secondsPassed, setSecondsPassed] = useState(0);
   const [correctLettersCount, setCorrectLettersCount] = useState(0);
   const [totalLettersCount, setTotalLettersCount] = useState(0);
+  const [invalidWords, setInvalidWords] = useState(new Set());
   const [timerReference, setTimerReference] = useState<any>();
 
   const stateRef = useRef({
@@ -15,7 +16,9 @@ export default function useCalculator({ statement, bufferHistory, buffer }: { st
     secondsPassed,
     correctLettersCount,
     timerReference,
-    totalLettersCount
+    totalLettersCount,
+    statement,
+    invalidWords
   });
 
   stateRef.current = {
@@ -24,7 +27,9 @@ export default function useCalculator({ statement, bufferHistory, buffer }: { st
     secondsPassed,
     correctLettersCount,
     timerReference,
-    totalLettersCount
+    totalLettersCount,
+    statement,
+    invalidWords
   }
 
   
@@ -34,6 +39,14 @@ export default function useCalculator({ statement, bufferHistory, buffer }: { st
     // console.log(tmpBufferHistory, statement)
     let correctLetters = 0, totalLetters = 0;
     statement.forEach((word: string, idxWord) => {
+      if(tmpBufferHistory.length - 1 > idxWord) {
+        if(tmpBufferHistory[idxWord].length && word !== tmpBufferHistory[idxWord]) {
+          setInvalidWords(set => {
+            set.add(word);
+            return set;
+          })
+        }
+      }
       if(tmpBufferHistory.length > idxWord) {
         tmpBufferHistory[idxWord]?.split('').forEach((letter, idxLetter) => {
           totalLetters ++;
@@ -53,17 +66,23 @@ export default function useCalculator({ statement, bufferHistory, buffer }: { st
     return accuracy.toFixed(2) + '%'
   }
 
+  const parseSeconds = (seconds: number) => {
+    return seconds.toFixed(2) + 's';
+  }
+
   const startTimer = async () => {
     const timer = setInterval(async () => {
-      await setSecondsPassed((seconds) => seconds + 1);
-    }, 1000);
+      await setSecondsPassed((seconds) => seconds + .01);
+    }, 10);
     setTimerReference(timer);
     return timer;
   }
 
-  const calculateSpeed = () => {
-    const {correctLettersCount, secondsPassed} = stateRef.current;
-    return ((correctLettersCount || 0) / (5 * (secondsPassed || 1))) * 60;
+  const calculateSpeed = () => {  
+    const {correctLettersCount, secondsPassed, statement, invalidWords} = stateRef.current;
+    const avgWordLength = (statement.join('').length / statement.length)
+    console.log(invalidWords.size);
+    return (Math.max(0, (correctLettersCount || 0) / (avgWordLength) - invalidWords.size / 1.2) / (secondsPassed || 1)) * 60;
   }
 
   const calculateAccuracy = () => {
@@ -95,6 +114,7 @@ export default function useCalculator({ statement, bufferHistory, buffer }: { st
       await setIsStopped(true);
       setIsStopped(false);
       setTimerReference(null);
+      setInvalidWords(new Set());
     },
     status: async () => {
       return getStateValueFromSetter(setIsRunning);
@@ -105,7 +125,8 @@ export default function useCalculator({ statement, bufferHistory, buffer }: { st
     result: () => {
       return {
         speed: parseSpeed(calculateSpeed()),
-        accuracy: parseAccuracy(calculateAccuracy())
+        accuracy: parseAccuracy(calculateAccuracy()),
+        seconds: parseSeconds(stateRef.current.secondsPassed || 0)
       }
     }
   })

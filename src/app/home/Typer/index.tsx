@@ -30,6 +30,7 @@ export default function Typer() {
       <div className="flex flex-col gap-1 w-full py-2">
         <span className="text-xl text-pink-500">accuracy: {results.accuracy}</span>
         <span className="text-xl text-pink-500">speed: {results.speed}</span>
+        <span className="text-xl text-pink-500">Seconds: {results.seconds}</span>
       </div>
       {statement.map((word, idx) => {
         if (activeWordIndex > idx) {
