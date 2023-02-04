@@ -6,7 +6,7 @@ import useStatementGenerator from "./useStatementGenerator";
 
 interface IPosition { top: string | number; left: string | number }
 
-const initialResults = { speed: '0.00%', accuracy: '0wpm', seconds: '0s'}
+const initialResults = { accuracy: '0.00%', speed: '0wpm', seconds: '0s'}
 
 export default function useTyper({options}: ITyper) {
   const [isActive, setIsActive] = useState<boolean>(true);
