@@ -1,5 +1,6 @@
 import { getStateValueFromSetter } from "@/utils/functions";
 import { MouseEvent as MouseEventReact, useCallback, useEffect, useState } from "react"
+import { ITyper } from "..";
 import useCalculator from "./useCalculator";
 import useStatementGenerator from "./useStatementGenerator";
 
@@ -7,7 +8,7 @@ interface IPosition { top: string | number; left: string | number }
 
 const initialResults = { speed: '0.00%', accuracy: '0wpm', seconds: '0s'}
 
-export default function useTyper() {
+export default function useTyper({options}: ITyper) {
   const [isActive, setIsActive] = useState<boolean>(true);
   const [activeWordIndex, setActiveWordIndex] = useState<number>(0);
   const [buffer, setBuffer] = useState<string>('');
@@ -174,7 +175,7 @@ export default function useTyper() {
     // @ts-ignore
     document.querySelector("#hdn-in").focus();
     // Generate new statement
-    setStatement(generateStatement({ type: 'dictionary', limit: 10 }));
+    setStatement(generateStatement({ type: 'dictionary', limit: options.numberOfWords }));
     // Clear the buffer
     setBuffer('');
     // Clear the buffer history
@@ -203,7 +204,7 @@ export default function useTyper() {
    */
   useEffect(() => {
     initializeRound();
-  }, [testsCount])
+  }, [testsCount, options])
 
 
   /**

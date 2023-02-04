@@ -2,7 +2,13 @@
 import useTyper from "./hooks/useTyper";
 import Word from "./Word";
 
-export default function Typer() {
+export interface ITyper {
+  options: {
+    numberOfWords: number
+  }
+}
+
+export default function Typer({options}: ITyper) {
   const {
     isActive,
     activeWordIndex,
@@ -16,10 +22,10 @@ export default function Typer() {
     handleLetterCaretChange,
     focusAction,
     setTestsCount
-  } = useTyper();
+  } = useTyper({options});
 
   return testsCount > -1 ? (
-    <div id="typer" className="w-full flex flex-wrap overflow-auto text-3xl relative my-28" onClick={focusAction(true)}>
+    <div id="typer" className="w-full flex flex-wrap overflow-auto text-3xl relative my-20" onClick={focusAction(true)}>
       {displayCaret && isActive && (
         <span id="typer-caret"
           className={`w-[3px] h-8 rounded-lg duration-100 bg-pink-500 block absolute`} style={{
