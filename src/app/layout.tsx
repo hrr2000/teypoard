@@ -4,7 +4,7 @@ import './globals.css'
 import NextNProgress from "nextjs-progressbar";
 import Content from './layout/Content'
 import Header from './layout/Header'
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 
 
 
