@@ -34,9 +34,9 @@ export default function Typer({options}: ITyper) {
           }}></span>
       )}
       <div className="flex flex-col gap-1 w-full py-2">
-        <span className="text-xl text-pink-500">accuracy: {results.accuracy}</span>
-        <span className="text-xl text-pink-500">speed: {results.speed}</span>
-        <span className="text-xl text-pink-500">seconds: {results.seconds}</span>
+        <span className="text-xl text-hightlight">accuracy: {results.accuracy}</span>
+        <span className="text-xl text-hightlight">speed: {results.speed}</span>
+        <span className="text-xl text-hightlight">seconds: {results.seconds}</span>
       </div>
       {statement.map((word, idx) => {
         if (activeWordIndex > idx) {
@@ -59,7 +59,7 @@ export default function Typer({options}: ITyper) {
       <div className="w-full text-center my-14">
         <input type="text"
           id="hdn-in"
-          className="w-0 p-0 outline-0 focus:outline-0"
+          className="w-0 p-0 outline-0 focus:outline-0 border-none outline-transparent"
           style={{
             boxShadow: 'none !important',
             border: 'none !important'

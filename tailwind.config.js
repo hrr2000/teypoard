@@ -6,14 +6,15 @@ module.exports = {
   theme: {
     extend: {
         backgroundColor: {
-            primary: "#141414",
-            secondary: "#1C1C1C"
+            primary: "#171820",
+            secondary: "#1d1f29"
         },
         textColor: {
-            primary: "#707070"
+            primary: "#707070",
+            hightlight: "#eee"
         },
         borderColor: {
-            primary: "#707070"
+            primary: "#83f0ff"
         }
     },
   },

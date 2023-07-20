@@ -8,8 +8,8 @@ body, .content {
 }
 
 input {
-    background-color: #242424 !important;
-    border-color: #242424 !important;
+    background-color: #1d1f29 !important;
+    border-color: #1d1f29 !important;
     transition: .3s !important;
     border-radius: 10px !important;
     color: white; 

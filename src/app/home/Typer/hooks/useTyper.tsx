@@ -236,7 +236,8 @@ export default function useTyper({options}: ITyper) {
       window.addEventListener("click", focusAction(false))
       window.addEventListener("resize", () => focusAction(false)(null))
       // handling keyboard inputs
-      window.addEventListener("keydown", handleKeyboardKeyDown)
+      const typer: HTMLElement = document?.querySelector('#typer') as HTMLElement;
+      typer?.addEventListener("keydown", handleKeyboardKeyDown)
     }
   }, [typeof window !== 'undefined'])
 
