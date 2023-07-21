@@ -16,16 +16,11 @@ export type DifficultyLevel = 'easy' | 'hard'
 
 let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
-const initSocket = async () => {
-  await fetch('/api/socket');
-  socket = io();
-  console.log('initzalied socket')
-}
-initSocket().catch(console.error);
 
 export default function Home() {
   const [numberOfWords, setNumberOfWords] = useState(10);
   const [difficulty, setDifficulty] = useState<'easy' | 'hard'>('easy');
+  const [initialized, setInitialized] = useState(false);
   const [players, setPlayers] = useState<IPlayer[]>([])
   const wordsOptions = [10, 25, 50];
 
@@ -37,12 +32,21 @@ export default function Home() {
   }, [numberOfWords, difficulty])
 
   useEffect(() => {
-    if(socket) {
+    if(initialized) return;
+    
+    const initSocket = async () => {
+      await fetch('/api/socket');
+      socket = io();
+      console.log('initzalied socket')
+    }
+
+    initSocket().catch(console.error).then(() => {
       socket.on("players", (players) => {
         setPlayers(players)
       })
-    }
-  }, [options])
+      setInitialized(true);
+    });
+  }, [])
 
   return (
     <div>
