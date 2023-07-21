@@ -1,22 +1,19 @@
 'use client'
-import { IPlayer } from "@/app/page";
 import React from "react";
-import { Dispatch, useEffect } from "react";
-import { io, Socket } from "socket.io-client";
-import { DefaultEventsMap } from "socket.io/dist/typed-events";
-import useTyper from "./hooks/useTyper";
+import { useEffect } from "react";
+import useTyper, { TypingResults } from "./hooks/useTyper";
 import Word from "./Word";
 
 export interface ITyper {
   options: {
     numberOfWords: number;
   }
-  setPlayers: Dispatch<IPlayer[]>;
+  onInit: () => void;
+  onResultsChange: (results: TypingResults) => void
 }
 
-let socket: Socket<DefaultEventsMap, DefaultEventsMap>;
 
-function Typer({options, setPlayers}: ITyper) {
+function Typer({options, onInit, onResultsChange}: ITyper) {
   const {
     isActive,
     activeWordIndex,
@@ -30,27 +27,16 @@ function Typer({options, setPlayers}: ITyper) {
     handleLetterCaretChange,
     focusAction,
     setTestsCount
-  } = useTyper({options, setPlayers});
+  } = useTyper({options, onInit, onResultsChange});
 
 
   useEffect(() => {
-    if(!socket) {
-      const initSocket = async () => {
-        await fetch('/api/socket');
-    
-        socket = io();
-    
-        socket.on("players", (players) => {
-          setPlayers(players)
-        })
-      }
-      initSocket().catch(console.error);
-    }
-  }, [])
+    void onInit();
+  }, [onInit])
 
   useEffect(() => {
-    socket?.emit("progress", results);
-  }, [results])
+    void onResultsChange(results);
+  }, [results, onResultsChange])
 
   return testsCount > -1 ? (
     <div id="typer" className="w-full flex flex-wrap overflow-auto text-3xl relative my-10" onClick={focusAction(true)}>

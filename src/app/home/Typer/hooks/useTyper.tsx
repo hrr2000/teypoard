@@ -8,6 +8,8 @@ interface IPosition { top: string | number; left: string | number }
 
 const initialResults = { accuracy: '0.00%', speed: '0wpm', seconds: '0s'}
 
+export type TypingResults = typeof initialResults
+
 export default function useTyper({options}: ITyper) {
   const [isActive, setIsActive] = useState<boolean>(true);
   const [activeWordIndex, setActiveWordIndex] = useState<number>(0);
@@ -37,8 +39,11 @@ export default function useTyper({options}: ITyper) {
   });
 
   useEffect(() => {
-    setResults(wpmCalculator.result()); 
-  }, [caretPosition]);
+    const timer = setInterval(() => {
+      if(!wpmCalculator.status()) clearInterval(timer) 
+      setResults(wpmCalculator.result()); 
+    }, 1000)
+  }, []);
 
   /**
    * Actions to do on the start of typign
