@@ -42,7 +42,7 @@ export default function Home() {
         setPlayers(players)
       })
     }
-  }, [socket])
+  }, [options])
 
   return (
     <div>
