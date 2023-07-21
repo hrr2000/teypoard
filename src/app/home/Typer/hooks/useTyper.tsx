@@ -38,12 +38,24 @@ export default function useTyper({options}: ITyper) {
     buffer,
   });
 
+  /**
+   * Recalculate every second
+   */
   useEffect(() => {
     const timer = setInterval(() => {
       if(!wpmCalculator.status()) clearInterval(timer) 
       setResults(wpmCalculator.result()); 
     }, 1000)
   }, []);
+
+  
+  /**
+   * Recalculate when the carePosition changes
+   */
+  useEffect(() => {
+      setResults(wpmCalculator.result()); 
+  }, [caretPosition]);
+
 
   /**
    * Actions to do on the start of typign
