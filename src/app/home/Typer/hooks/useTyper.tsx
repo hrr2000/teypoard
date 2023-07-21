@@ -13,7 +13,7 @@ export default function useTyper({options}: ITyper) {
   const [activeWordIndex, setActiveWordIndex] = useState<number>(0);
   const [buffer, setBuffer] = useState<string>('');
   const [bufferHistory, setBufferHistory] = useState<string[]>([]);
-  const [caretPosition, setCaretPosition] = useState<IPosition>({ top: '0px', left: '0px' });
+  const [caretPosition, setCaretPosition] = useState<IPosition>({ top: '108px', left: '0px' });
   const [displayCaret, setDisplayCaret] = useState<boolean>(false);
   const [statement, setStatement] = useState<string[]>([]);
   const [testsCount, setTestsCount] = useState<number>(0);
@@ -64,6 +64,7 @@ export default function useTyper({options}: ITyper) {
     // @ts-ignore
     if(e && e?.target?.classList?.contains('option-btn')) {return}
     document.querySelector('body')?.setAttribute('data-active', state ? 'true' : 'false')
+    document.getElementById('hdn-in')?.focus()
     return setIsActive(state);
   }, [])
 

@@ -5,7 +5,7 @@ function getOffset(el: any) {
   const parent = document?.querySelector('#typer')?.getClientRects()[0];
   return {
     left: rect?.left + window.scrollX - (parent?.left || 0),
-    top: rect?.top + window.scrollY - (parent?.top || 0)
+    top: rect?.top - (parent?.top || 0)
   };
 }
 
@@ -25,6 +25,7 @@ function Letter({
   useEffect(() => {
     if (isActive && typeof document !== 'undefined') {
       const offset = getOffset(document.querySelector(`#${id}`));
+      console.log(offset)
       setCaretPosition(offset)
     }
   }, [])

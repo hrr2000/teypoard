@@ -28,10 +28,13 @@ export default function handler(
 
   io.on("connection", (socket) => {
     socket.setMaxListeners(50)
+
+    socket.on("connect", () => {
+      io.emit("players", Array.from(players.values()))
+    })
+
     socket.on("progress", (data) => {
       players.set(socket.id, data);
-      console.log(players)
-      console.log(io.engine.clientsCount)
       io.emit("players", Array.from(players.values()))
     })
 

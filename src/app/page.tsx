@@ -34,9 +34,9 @@ export default function Home() {
       <Typer options={options} 
       setPlayers={setPlayers} />
       <div className={`container relative overflow-auto`}>
-        {players.map((player, idx) => {
+        {players.sort((player1, player2) => parseInt(player2.speed) - parseInt(player1.speed)).map((player, idx) => {
           return (
-            <div key={`player-${idx}`} className={`w-full flex flex-col gap-5 bg-secondary p-5 rounded-lg`}>
+            <div key={`player-${idx}`} className={`w-full flex flex-col gap-5 bg-secondary p-5 my-5 rounded-lg`}>
               <h2>
                 Guest player#0{idx + 1}
               </h2>
