@@ -32,7 +32,7 @@ export default function Home() {
   }, [numberOfWords, difficulty])
 
   useEffect(() => {
-    if(initialized) return;
+    if(initialized || socket) return;
     
     const initSocket = async () => {
       await fetch('/api/socket');
