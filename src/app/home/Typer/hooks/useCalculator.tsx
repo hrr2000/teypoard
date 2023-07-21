@@ -81,7 +81,6 @@ export default function useCalculator({ statement, bufferHistory, buffer }: { st
   const calculateSpeed = () => {  
     const {correctLettersCount, secondsPassed, statement, invalidWords} = stateRef.current;
     const avgWordLength = (statement.join('').length / statement.length)
-    console.log(invalidWords.size);
     return (Math.max(0, (correctLettersCount || 0) / (avgWordLength) - invalidWords.size * .2) / (secondsPassed || 1)) * 60;
   }
 

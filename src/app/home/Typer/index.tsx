@@ -1,4 +1,5 @@
 'use client'
+import { DifficultyLevel } from "@/app/page";
 import React from "react";
 import { useEffect } from "react";
 import useTyper, { TypingResults } from "./hooks/useTyper";
@@ -7,9 +8,10 @@ import Word from "./Word";
 export interface ITyper {
   options: {
     numberOfWords: number;
+    difficulty: DifficultyLevel
   }
-  onInit: () => void;
-  onResultsChange: (results: TypingResults) => void
+  onInit?: () => void;
+  onResultsChange?: (results: TypingResults) => void
 }
 
 
@@ -31,12 +33,12 @@ function Typer({options, onInit, onResultsChange}: ITyper) {
 
 
   useEffect(() => {
-    void onInit();
-  }, [onInit])
+    void onInit?.();
+  }, [])
 
   useEffect(() => {
-    void onResultsChange(results);
-  }, [results, onResultsChange])
+    void onResultsChange?.(results);
+  }, [results])
 
   return testsCount > -1 ? (
     <div id="typer" className="w-full flex flex-wrap overflow-auto text-3xl relative my-10" onClick={focusAction(true)}>

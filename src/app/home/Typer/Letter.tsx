@@ -25,7 +25,6 @@ function Letter({
   useEffect(() => {
     if (isActive && typeof document !== 'undefined') {
       const offset = getOffset(document.querySelector(`#${id}`));
-      console.log(offset)
       setCaretPosition(offset)
     }
   }, [])

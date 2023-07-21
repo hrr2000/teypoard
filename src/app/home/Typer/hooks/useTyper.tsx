@@ -183,7 +183,7 @@ export default function useTyper({options}: ITyper) {
     // @ts-ignore
     document.querySelector("#hdn-in").focus();
     // Generate new statement
-    setStatement(generateStatement({ type: 'dictionary', limit: options.numberOfWords }));
+    setStatement(generateStatement({ type: 'dictionary', limit: options.numberOfWords, difficulty: options.difficulty }));
     // Clear the buffer
     setBuffer('');
     // Clear the buffer history
