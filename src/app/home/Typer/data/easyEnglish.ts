@@ -193,4 +193,5 @@ export const easyEnglishWordsList = ['use',
 'however',
 'because',
 'open',
-'large'];
+'large',
+];

@@ -86,12 +86,15 @@ export default function Home() {
       />
 
       <div className={`container relative overflow-auto`}>
+        <h3 className={`text-gray-200 text-2xl font-black`}>
+          Online Players
+        </h3>
         {players.sort((player1, player2) => parseInt(player2.speed) - parseInt(player1.speed)).map((player, idx) => {
           return (
             <div key={`player-${idx}`} className={`w-full flex flex-col gap-5 bg-secondary p-5 my-5 rounded-lg`}>
-              <h2 className={`text-gray-300 border-b-4 h-6 w-fit border-pink-700`}>
+              <h4 className={`text-gray-300 border-b-4 h-6 w-fit border-pink-700`}>
                 Guest player
-              </h2>
+              </h4>
               <div className="flex flex-col gap-1 w-full">
                 <span className="text-xl text-hightlight">accuracy: {player.accuracy}</span>
                 <span className="text-xl text-hightlight">speed: {player.speed}</span>

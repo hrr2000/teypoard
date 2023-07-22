@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@200;300;400;500;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -18,4 +20,8 @@ input:focus {
     border-width: 1px !important;
     border-color: #e91e63ed !important;
     box-shadow: 0 0 #e91e63 !important;
+}
+
+.font-tajawal {
+  font-family: 'Tajawal', sans-serif;
 }

@@ -1,0 +1,152 @@
+import { arabicTranslation } from "./arabicTranslation";
+
+// Hard words array
+const hardWords = [
+  'Aberration',
+  'Abstruse',
+  'Acquiesce',
+  'Acrimonious',
+  'Adumbrate',
+  'Aggrandize',
+  'Alacrity',
+  'Anathema',
+  'Antediluvian',
+  'Apotheosis',
+  'Approbation',
+  'Arcanum',
+  'Asperity',
+  'Assiduous',
+  'Atavistic',
+  'Attenuate',
+  'Augury',
+  'Auspicious',
+  'Avarice',
+  'Bellicose',
+  'Bombastic',
+  'Capricious',
+  'Castigate',
+  'Caustic',
+  'Chicanery',
+  'Churlish',
+  'Cogent',
+  'Compendious',
+  'Concomitant',
+  'Conflagration',
+  'Consternation',
+  'Contemplative',
+  'Contrite',
+  'Convivial',
+  'Corpulent',
+  'Credulity',
+  'Cryptic',
+  'Cynosure',
+  'Deleterious',
+  'Demagogue',
+  'Denouement',
+  'Desultory',
+  'Diaphanous',
+  'Didactic',
+  'Dilatory',
+  'Discomfit',
+  'Disparate',
+  'Disseminate',
+  'Duplicity',
+  'Ebullient'
+];
+
+// Medium words array
+const mediumWords = [
+  'Abate',
+  'Acumen',
+  'Adroit',
+  'Aesthetic',
+  'Affable',
+  'Ambivalent',
+  'Ameliorate',
+  'Anomaly',
+  'Apathy',
+  'Aptitude',
+  'Arduous',
+  'Articulate',
+  'Ascetic',
+  'Assuage',
+  'Austerity',
+  'Belie',
+  'Beneficent',
+  'Bucolic',
+  'Cajole',
+  'Candor',
+  'Capitulate',
+  'Catalyst',
+  'Censure',
+  'Chagrin',
+  'Charlatan',
+  'Circumspect',
+  'Coerce',
+  'Cogitate',
+  'Collusion',
+  'Commensurate',
+  'Complacency',
+  'Condone',
+  'Confound',
+  'Conjecture',
+  'Connoisseur',
+  'Consensus',
+  'Constituent',
+  'Contravene',
+  'Conundrum',
+  'Copious',
+  'Credence',
+  'Criterion',
+  'Cursory',
+  'Dearth',
+  'Debacle',
+  'Deference',
+  'Demure',
+  'Deprecate',
+  'Deride',
+  'Despot'
+];
+
+// Easy words array
+const easyWords = [
+  'Apple',
+  'Ball',
+  'Cat',
+  'Dog',
+  'Elephant',
+  'Fish',
+  'Grapes',
+  'House',
+  'Ice',
+  'Jacket',
+  'Kite',
+  'Lion',
+  'Monkey',
+  'Nose',
+  'Orange',
+  'Pencil',
+  'Queen',
+  'Rabbit',
+  'Snake',
+  'Tree',
+  'Umbrella',
+  'Van',
+  'Watch',
+  'X-ray',
+  'Yellow',
+  'Zebra'
+];
+
+// Merging all the arrays into a single array
+export const hardEnglishWordsListOld = [...hardWords, ...mediumWords, ...easyWords];
+
+function getList() {
+  const wordsList = [];
+  for(const k in arabicTranslation) {
+    wordsList.push(k);
+  }
+  return wordsList;
+}
+
+export const hardEnglishWordsList = getList();

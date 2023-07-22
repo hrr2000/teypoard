@@ -41,7 +41,7 @@ function Typer({options, onInit, onResultsChange}: ITyper) {
   }, [results])
 
   return testsCount > -1 ? (
-    <div id="typer" className="w-full flex flex-wrap overflow-auto text-3xl relative my-10" onClick={focusAction(true)}>
+    <div id="typer" className="w-full flex flex-wrap overflow-hidden text-3xl relative my-10" onClick={focusAction(true)}>
       {displayCaret && isActive && (
         <span id="typer-caret"
           className={`w-[3px] h-8 rounded-lg duration-100 bg-pink-500 block absolute`} style={{

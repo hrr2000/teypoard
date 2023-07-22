@@ -1,7 +1,7 @@
 import { shuffle } from "@/utils/functions";
 import { ITyper } from "..";
 import { easyEnglishWordsList } from "../data/easyEnglish";
-import { mediumEnglishWordsList } from "../data/mediumEnglish";
+import { hardEnglishWordsList } from "../data/hardEnglish";
 
 type IGeneratorOptions = {
   type: 'dictionary';
@@ -11,7 +11,7 @@ type IGeneratorOptions = {
 const dataSource = {
   dictionary: {
     easy: easyEnglishWordsList,
-    hard: mediumEnglishWordsList
+    hard: hardEnglishWordsList
   }
 }
 

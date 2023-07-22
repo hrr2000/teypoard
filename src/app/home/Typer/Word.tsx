@@ -1,8 +1,11 @@
 import { GRK } from "@/utils/functions";
-import { memo } from "react";
+import { memo, useState } from "react";
 import useWord from "./hooks/useWord";
 import Letter from "./Letter";
 import { letterStates } from "./utils/constants";
+import { arabicTranslation } from "./data/arabicTranslation";
+
+type ArabicTranslationKeyType = keyof typeof arabicTranslation
 
 function Word({ word,
   isActive,
@@ -19,7 +22,12 @@ function Word({ word,
   const { content, compareLetters } = useWord({ word, isActive, buffer, isPassed });
 
   return (
-    <span className={`mr-4 inline-block duration-200 ${isPassed && word != buffer ? 'border-b-2 border-pink-500' : ''}`}>
+    <span 
+    className={`mr-4 mb-2 hover:text-orange-400 group cursor-pointer relative inline-block duration-200 ${isPassed && word != buffer ? 'border-b-2 border-pink-500' : ''}`}>
+      <span className={`absolute text-black font-bold block w-max font-tajawal top-0 group-hover:top-[-150%] text-[20px] bg-white px-3 py-0 rounded-lg transition-all duration-300 opacity-0 group-hover:opacity-90`}>
+        {arabicTranslation?.[word as ArabicTranslationKeyType] || 'لا توجد ترجمة'}
+        <span className={`absolute block h-2 w-2 bg-white opacity-90 rotate-45 -bottom-1 left-1/2 -translate-x-1/2`}></span>
+      </span>
       {content.split('').map((letter, idx) => {
         if (word.length <= idx) {
           // extra letter
